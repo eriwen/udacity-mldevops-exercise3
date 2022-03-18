@@ -1,0 +1,12 @@
+name: udacity
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - numpy=1.22.2
+  - pandas=1.4.1
+  - pytest=7.0.1
+  - requests=2.27.1
+  - scikit-learn=1.0.2
+  - fastapi=0.63.0
+  - uvicorn=0.17.5
