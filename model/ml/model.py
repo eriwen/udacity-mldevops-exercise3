@@ -62,9 +62,9 @@ def save_model(model, file_path):
 
 def grid_search(X_train, y_train, fixed_params, scorer='roc_auc'):
     cv_params = [{
-        'n_estimators': range(150, 200, 50),
-        'max_depth': range(7, 10, 2),
-        'eta': [0.1]
+        'n_estimators': range(50, 400, 50),
+        'max_depth': range(3, 8, 1),
+        'eta': [0.01, 0.05, 0.1]
     }]
     logger.info(f"Tuning hyperparameters for {scorer}")
 
