@@ -10,3 +10,4 @@ dependencies:
   - scikit-learn=1.0.2
   - fastapi=0.63.0
   - uvicorn=0.17.5
+  - xgboost=1.5.1
