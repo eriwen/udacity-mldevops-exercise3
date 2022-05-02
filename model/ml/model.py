@@ -43,7 +43,9 @@ def load_model(file_path):
     model
         XGBoost model.
     """
-    return xgb.Booster().load_model(file_path)
+    booster = xgb.Booster()
+    booster.load_model(file_path)
+    return booster
 
 
 def save_model(model, file_path):

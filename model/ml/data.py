@@ -1,9 +1,23 @@
 import numpy as np
+import os.path
+import pandas as pd
 from sklearn.preprocessing import LabelBinarizer, OneHotEncoder
 
 
+def load_data(root_dir):
+    return pd.read_csv(os.path.join(root_dir, 'data', 'census-cleaner.csv'))
+
+
+def get_categorical_features():
+    return ["workclass", "education", "marital-status", "occupation", "relationship", "race", "sex", "native-country"]
+
+
+def get_target():
+    return "salary"
+
+
 def process_data(
-    X, categorical_features=[], label=None, training=True, encoder=None, lb=None
+    X, categorical_features=get_categorical_features(), label=get_target(), training=True, encoder=None, lb=None
 ):
     """ Process the data used in the machine learning pipeline.
 
