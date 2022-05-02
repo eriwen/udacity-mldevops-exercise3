@@ -33,6 +33,7 @@ XGBoost was configured to optimize the AUC metric
 ## Evaluation Data
 
 20% of the US Census data set was sampled at random for testing.
+The same encoder and label binarizer used for model training must be provided for inference. 
 
 ## Metrics
 
