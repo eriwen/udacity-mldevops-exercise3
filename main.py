@@ -1,9 +1,16 @@
 from fastapi import FastAPI
 from pydantic import BaseModel, Field
+import os
 import pandas as pd
 
 from model.ml.data import get_categorical_features, process_data
 from model.ml.model import load_model, inference
+
+if "DYNO" in os.environ and os.path.isdir(".dvc"):
+    os.system("dvc config core.no_scm true")
+    if os.system("dvc pull") != 0:
+        exit("dvc pull failed")
+    os.system("rm -r .dvc .apt/usr/lib/dvc")
 
 negative_sample = {
     "age": 38,
