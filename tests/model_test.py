@@ -1,17 +1,13 @@
-import numpy as np
 import os.path
-from sklearn.model_selection import train_test_split
-import pandas as pd
-import pytest
 import sys
+from pathlib import Path
+import pytest
 import xgboost as xgb
 from sklearn.preprocessing import OneHotEncoder, LabelBinarizer
-from pathlib import Path
+from model.ml.data import load_data, process_data
+from model.ml.model import save_model, load_model, generate_slices, inference
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-
-from model.ml.data import load_data, process_data, get_categorical_features
-from model.ml.model import save_model, load_model, model_performance, generate_slices, inference
 
 
 @pytest.fixture
