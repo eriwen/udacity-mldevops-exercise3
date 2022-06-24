@@ -22,7 +22,7 @@ fixed_params = {'use_label_encoder': False, 'objective': 'binary:logistic', 'eva
 model = train_model(X_train, y_train, fixed_params)
 
 logger.info('Saving model')
-save_model(model, os.path.join(os.path.dirname(__file__), 'xgboost-classifier.json'))
+save_model(model, encoder, lb, os.path.dirname(__file__))
 
 logger.info('Generating model performance for data slices')
 with open("slice_output.txt", "w") as slice_output_file:

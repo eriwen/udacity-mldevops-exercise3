@@ -1,14 +1,17 @@
+import numpy as np
 import os.path
-import sys
-from pathlib import Path
-
+from sklearn.model_selection import train_test_split
+import pandas as pd
 import pytest
+import sys
 import xgboost as xgb
+from sklearn.preprocessing import OneHotEncoder, LabelBinarizer
+from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from model.ml.data import load_data, process_data
-from model.ml.model import save_model, load_model, model_performance, generate_slices
+from model.ml.data import load_data, process_data, get_categorical_features
+from model.ml.model import save_model, load_model, model_performance, generate_slices, inference
 
 
 @pytest.fixture
@@ -16,25 +19,21 @@ def data():
     return load_data(os.path.join(os.path.dirname(__file__), '..'))
 
 
-@pytest.fixture
-def model():
-    X_train, y_train, encoder, lb = process_data(load_data(os.path.join(os.path.dirname(__file__), '..')))
+def test_save_and_load_model(data, tmpdir):
+    X_train, y_train, encoder, lb = process_data(data)
     model = xgb.XGBClassifier(use_label_encoder=False).fit(X_train, y_train)
-    return model
-
-
-def test_save_and_load_model(model, tmpdir):
-    model_path = os.path.join(tmpdir, 'model.json')
-    save_model(model, model_path)
-    loaded_model = load_model(model_path)
+    save_model(model, encoder, lb, tmpdir)
+    loaded_model, loaded_encoder, loaded_lb = load_model(tmpdir)
     assert type(loaded_model) is xgb.Booster
+    assert type(loaded_encoder) is OneHotEncoder
+    assert type(loaded_lb) is LabelBinarizer
 
 
-def test_compute_model_performance(model):
-    X_test, y_test, _, _ = process_data(load_data(os.path.join(os.path.dirname(__file__), '..')))
-    metrics = model_performance(model, X_test, y_test)
-    for metric in ["precision", "recall", "fbeta"]:
-        assert 0 < metrics[metric] <= 1
+def test_inference(data):
+    model, encoder, lb = load_model('model')
+    X, _, _, _ = process_data(data, training=False, encoder=encoder, lb=lb)
+    prediction = inference(model, X)
+    assert prediction is not None
 
 
 def test_generate_slices(data):

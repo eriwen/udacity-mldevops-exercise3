@@ -1,4 +1,7 @@
 import logging
+import numpy as np
+import os.path
+import pickle
 import warnings
 import xgboost as xgb
 from sklearn.model_selection import GridSearchCV
@@ -8,6 +11,9 @@ warnings.simplefilter("ignore")
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)-15s %(message)s")
 logger = logging.getLogger()
+model_file_name = "xgboost-classifier.json"
+encoder_file_name = "encoder.pkl"
+lb_file_name = "lb.pkl"
 
 
 def train_model(X_train, y_train, fixed_params):
@@ -32,7 +38,7 @@ def train_model(X_train, y_train, fixed_params):
 
 def load_model(file_path):
     """
-    Load XGBoost model from the supplied file path.
+    Load XGBoost model, encoder, and label binarizer from the supplied file path.
 
     Inputs
     ------
@@ -40,15 +46,21 @@ def load_model(file_path):
         Absolute file path where model resides.
     Returns
     -------
-    model
+    booster
         XGBoost model.
+    encoder : OneHotEncoder
+        Category encoder.
+    lb : LabelBinarizer
+        Label binarizer.
     """
     booster = xgb.Booster()
-    booster.load_model(file_path)
-    return booster
+    booster.load_model(os.path.join(file_path, model_file_name))
+    encoder = pickle.load(open(os.path.join(file_path, encoder_file_name), "rb"))
+    lb = pickle.load(open(os.path.join(file_path, lb_file_name), "rb"))
+    return booster, encoder, lb
 
 
-def save_model(model, file_path):
+def save_model(model, encoder, lb, file_path):
     """
     Save given model to the supplied file path.
 
@@ -56,10 +68,16 @@ def save_model(model, file_path):
     ------
     model : XGBModel
         XGBoost model.
+    encoder : OneHotEncoder
+        Category encoder.
+    lb : LabelBinarizer
+        Label binarizer.
     file_path : String
-        Absolute file path to store model.
+        Directory path to store model.
     """
-    model.get_booster().save_model(file_path)
+    model.get_booster().save_model(os.path.join(file_path, model_file_name))
+    pickle.dump(encoder, open(os.path.join(file_path, encoder_file_name), "wb"))
+    pickle.dump(lb, open(os.path.join(file_path, lb_file_name), "wb"))
 
 
 def grid_search(X_train, y_train, fixed_params, scorer='roc_auc'):
@@ -128,4 +146,4 @@ def inference(model, X):
     preds : np.array
         Predictions from the model.
     """
-    return model.predict(X)
+    return model.predict(xgb.DMatrix(X))
