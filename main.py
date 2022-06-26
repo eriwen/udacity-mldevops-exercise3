@@ -64,7 +64,7 @@ class FeatureSet(BaseModel):
     native_country: str = Field(alias="native-country")
 
     class Config:
-        schema_extra = {"negative": negative_sample, "positive": positive_sample}
+        schema_extra = {"example": negative_sample, "example2": positive_sample}
 
 
 app = FastAPI()
