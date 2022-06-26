@@ -2,9 +2,10 @@ import json
 import sys
 from fastapi.testclient import TestClient
 from pathlib import Path
-from main import app, negative_sample, positive_sample
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+
+from main import app, negative_sample, positive_sample
 
 client = TestClient(app)
 
